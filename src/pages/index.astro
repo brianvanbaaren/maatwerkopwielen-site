@@ -1,25 +1,31 @@
 ---
 import Layout from "../layouts/BaseLayout.astro";
-import testimonials from "../../data/testimonials.json";
+import CmsImage from "../components/CmsImage.astro";
 import { Icon } from "astro-icon/components";
+import { getEntry, render } from "astro:content";
+import { home, testimonials, contactLinks, site } from "../lib/content";
+
+const over = await getEntry("pages", "over");
+if (!over) throw new Error("src/content/pages/over.md ontbreekt.");
+const { Content: OverContent } = await render(over);
+
+const initial = (name: string) => name.trim().charAt(0).toUpperCase() || "?";
 ---
 
-<Layout
-  title="Maatwerk op Wielen – Persoonlijke automakelaar"
-  description="Uw persoonlijke automakelaar – van zoektocht tot aflevering."
->
+<Layout title={home.seo.title} description={home.seo.description}>
   <!-- ░░ HERO ░░ -->
   <section
     id="hero"
     class="relative min-h-[85vh] flex items-center justify-center"
   >
-    <img
-      src="/auto3.png"
-      alt="Moderne auto rijdt door zonnige straat"
+    <CmsImage
+      src={home.hero.image}
+      alt={home.hero.imageAlt}
       class="absolute inset-0 w-full h-full object-cover"
-      width="1920"
-      height="1080"
-      loading="lazy"
+      widths={[640, 1024, 1600, 1920]}
+      sizes="100vw"
+      loading="eager"
+      fetchpriority="high"
     />
 
     <div
@@ -31,17 +37,29 @@ import { Icon } from "astro-icon/components";
       <h1
         class="text-snow-gray font-serif text-4xl md:text-6xl font-bold leading-tight mb-4"
       >
-        Maatwerk op wielen,<br class="hidden sm:inline" /> zonder gedoe!
+        {home.hero.titleLine1}{
+          home.hero.titleLine2 && (
+            <>
+              <br class="hidden sm:inline" />
+              {home.hero.titleLine2}
+            </>
+          )
+        }
       </h1>
-      <p class="text-snow-gray/90 text-lg md:text-2xl mb-8">
-        Uw persoonlijke automakelaar – van zoektocht tot aflevering.
-      </p>
+      {
+        home.hero.subtitle && (
+          <p class="text-snow-gray/90 text-lg md:text-2xl mb-8">
+            {home.hero.subtitle}
+          </p>
+        )
+      }
 
       <a
         href="#contact"
         class="inline-flex items-center gap-2 bg-primary py-3 px-8 rounded-lg text-white text-lg font-medium shadow-lg transition hover:-translate-y-0.5 hover:shadow-xl focus:ring-4 focus:ring-primary/40"
       >
-        <Icon name="ic:baseline-calendar-today" class="w-5 h-5" /> Plan gratis intake
+        <Icon name="ic:baseline-calendar-today" class="w-5 h-5" />
+        {home.hero.ctaLabel}
       </a>
     </div>
   </section>
@@ -51,28 +69,7 @@ import { Icon } from "astro-icon/components";
     <div class="container">
       <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
         {
-          [
-            {
-              icon: "ic:baseline-verified-user",
-              title: "100% onafhankelijk",
-              text: "Geen voorraad, geen verkooppraatjes – alleen uw belang.",
-            },
-            {
-              icon: "ic:baseline-vpn-key",
-              title: "Top-aanbod op maat",
-              text: "Dealers, veilingen en particulieren in heel Nederland.",
-            },
-            {
-              icon: "ic:baseline-handshake",
-              title: "Onderhandelen & check",
-              text: "U bespaart tijd en geld; elke auto wordt grondig gecontroleerd.",
-            },
-            {
-              icon: "ic:baseline-person",
-              title: "Eén aanspreekpunt",
-              text: "Persoonlijk contact – reactie op WhatsApp binnen 24 uur.",
-            },
-          ].map((u) => (
+          home.usps.map((u) => (
             <div class="group p-6 bg-white rounded-2xl shadow-md flex flex-col transition hover:shadow-lg hover:-translate-y-1">
               <Icon
                 name={u.icon}
@@ -95,33 +92,12 @@ import { Icon } from "astro-icon/components";
       <h2
         class="text-center text-trust-blue font-serif text-3xl md:text-4xl font-bold mb-16"
       >
-        Zo werkt het
+        {home.process.heading}
       </h2>
 
       <div class="grid gap-12 sm:grid-cols-2 lg:grid-cols-4">
         {
-          [
-            {
-              icon: "ic:baseline-question-answer",
-              step: "1. Intake",
-              desc: "Uw wensen, budget en planning helder in kaart.",
-            },
-            {
-              icon: "ic:baseline-search",
-              step: "2. Zoeken",
-              desc: "Selectie van geschikte auto’s uit vertrouwde bronnen.",
-            },
-            {
-              icon: "ic:baseline-assignment-turned-in",
-              step: "3. Controle & deal",
-              desc: "Historie-check, proefrit en scherpe onderhandeling.",
-            },
-            {
-              icon: "ic:baseline-directions-car",
-              step: "4. Levering",
-              desc: "Bij u thuis of op locatie – rijklaar en zonder zorgen.",
-            },
-          ].map((p) => (
+          home.process.steps.map((p) => (
             <div class="text-center flex flex-col items-center">
               <Icon name={p.icon} class="w-10 h-10 text-primary mb-4" />
               <h3 class="text-trust-blue font-semibold mb-1">{p.step}</h3>
@@ -136,31 +112,32 @@ import { Icon } from "astro-icon/components";
   <!-- ░░ OVER JASPER ░░ -->
   <section id="over" class="py-20 md:py-28 bg-snow-gray">
     <div class="container grid gap-12 md:grid-cols-2 items-center">
-      <img
-        src="/1780949604858.jpg"
-        alt="Portret van Jasper Zweers"
+      <CmsImage
+        src={over.data.image}
+        alt={over.data.imageAlt ?? over.data.heading}
         class="w-full rounded-2xl shadow-lg aspect-[4/3] object-cover"
-        loading="lazy"
+        widths={[480, 768, 1024]}
+        sizes="(min-width: 768px) 50vw, 100vw"
       />
 
-      <div class="prose max-w-prose md:max-w-none">
+      <div class="max-w-prose md:max-w-none">
         <h2
           class="text-trust-blue font-serif text-3xl md:text-4xl font-bold mb-6"
         >
-          Over Jasper
+          {over.data.heading}
         </h2>
-        <p>
-          <strong>Jasper Zweers</strong> – automakelaar met passie voor auto’s én
-          service. Hij helpt particulieren en ondernemers bij het vinden, aankopen
-          en leveren van de juiste auto.
-        </p>
-        <p>
-          U vertelt wat u zoekt, Jasper regelt de rest: zoeken, vergelijken,
-          onderhandelen en leveren. Zo bespaart u tijd, geld én frustratie.
-        </p>
-        <p class="text-trust-blue italic font-medium">
-          “Uw auto, uw wensen – mijn werk.”
-        </p>
+        <div
+          class="text-charcoal leading-relaxed [&_p]:mb-4 [&_p:last-child]:mb-0 [&_strong]:font-semibold [&_a]:text-primary [&_a]:underline"
+        >
+          <OverContent />
+        </div>
+        {
+          over.data.quote && (
+            <p class="text-trust-blue italic font-medium mt-6">
+              “{over.data.quote}”
+            </p>
+          )
+        }
       </div>
     </div>
   </section>
@@ -171,18 +148,28 @@ import { Icon } from "astro-icon/components";
       <h2
         class="text-trust-blue font-serif text-3xl md:text-4xl font-bold mb-16"
       >
-        Ervaringen van klanten
+        {home.reviews.heading}
       </h2>
 
       <div class="grid gap-10 sm:grid-cols-2 lg:grid-cols-4">
         {
           testimonials.map((t) => (
             <figure class="relative bg-white p-8 rounded-3xl shadow-md flex flex-col">
-              <img
-                src={t.img}
+              <CmsImage
+                src={t.image}
                 alt={t.name}
                 class="w-16 h-16 object-cover rounded-full border-4 border-surface shadow-lg -mt-12 self-center"
-              />
+                widths={[64, 128]}
+                sizes="64px"
+              >
+                <div
+                  slot="fallback"
+                  aria-hidden="true"
+                  class="w-16 h-16 grid place-content-center rounded-full border-4 border-surface shadow-lg -mt-12 self-center bg-primary text-white font-serif text-xl font-bold"
+                >
+                  {initial(t.name)}
+                </div>
+              </CmsImage>
               <blockquote class="mt-6 text-neutral/90 leading-relaxed mb-4 flex-1">
                 “{t.quote}”
               </blockquote>
@@ -202,31 +189,18 @@ import { Icon } from "astro-icon/components";
       <h2
         class="text-center text-trust-blue font-serif text-3xl md:text-4xl font-bold mb-10"
       >
-        Transparant tarief
+        {home.pricing.heading}
       </h2>
 
       <div class="max-w-3xl mx-auto bg-white p-10 rounded-2xl shadow-md">
         <p class="text-center text-charcoal text-lg mb-8 leading-relaxed">
-          Volledige begeleiding vanaf
-          <span class="text-trust-blue font-bold">€ 595 incl. btw</span>. U
-          betaalt pas wanneer we dé auto hebben gevonden.
+          {home.pricing.priceLabel}
+          <span class="text-trust-blue font-bold">{home.pricing.price}</span>.
+          {home.pricing.priceNote}
         </p>
 
         {
-          [
-            {
-              q: "Wat krijg ik voor dit bedrag?",
-              a: "Persoonlijk advies, selectie uit betrouwbaar aanbod, historie- en technische check, onderhandeling en levering.",
-            },
-            {
-              q: "Is het intakegesprek gratis?",
-              a: "Ja, het intakegesprek is kosteloos en vrijblijvend.",
-            },
-            {
-              q: "Hoe snel reageer je?",
-              a: "Jasper reageert op WhatsApp doorgaans binnen 24 uur, ook in het weekend.",
-            },
-          ].map((item) => (
+          home.pricing.faq.map((item) => (
             <details class="border-t border-gray-200 py-4 last:pb-0">
               <summary class="cursor-pointer font-semibold text-trust-blue leading-relaxed">
                 {item.q}
@@ -245,40 +219,49 @@ import { Icon } from "astro-icon/components";
       <h2
         class="text-trust-blue font-serif text-3xl md:text-4xl font-bold mb-6"
       >
-        Plan uw gratis intake
+        {home.contact.heading}
       </h2>
-      <p class="text-charcoal mb-10 leading-relaxed">
-        Bel, mail of stuur een WhatsApp-bericht en Jasper neemt binnen 24 uur
-        contact met u op.
-      </p>
+      <p class="text-charcoal mb-10 leading-relaxed">{home.contact.text}</p>
 
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a
-          href="https://wa.me/316279665314"
-          class="min-w-[11rem] flex-1 inline-flex items-center justify-center gap-2
+        {
+          contactLinks.whatsapp && (
+            <a
+              href={contactLinks.whatsapp}
+              class="min-w-[11rem] flex-1 inline-flex items-center justify-center gap-2
                  px-6 py-3 bg-primary text-white font-medium rounded-lg shadow-lg transition
                  hover:-translate-y-0.5 hover:shadow-xl focus:ring-4 focus:ring-primary/40"
-        >
-          <Icon name="ic:baseline-whatsapp" class="w-5 h-5" /> WhatsApp
-        </a>
+            >
+              <Icon name="ic:baseline-whatsapp" class="w-5 h-5" /> WhatsApp
+            </a>
+          )
+        }
 
-        <a
-          href="tel:+316279665314"
-          class="min-w-[11rem] flex-1 inline-flex items-center justify-center gap-2
+        {
+          contactLinks.phone && (
+            <a
+              href={contactLinks.phone}
+              class="min-w-[11rem] flex-1 inline-flex items-center justify-center gap-2
                  px-6 py-3 bg-trust-blue text-white font-medium rounded-lg shadow-lg transition
                  hover:-translate-y-0.5 hover:shadow-xl focus:ring-4 focus:ring-trust-blue/40"
-        >
-          <Icon name="ic:baseline-call" class="w-5 h-5" /> Bel nu
-        </a>
+            >
+              <Icon name="ic:baseline-call" class="w-5 h-5" /> Bel nu
+            </a>
+          )
+        }
 
-        <a
-          href="mailto:jasperzweers07@gmail.com"
-          class="min-w-[11rem] flex-1 inline-flex items-center justify-center gap-2
+        {
+          contactLinks.email && (
+            <a
+              href={contactLinks.email}
+              class="min-w-[11rem] flex-1 inline-flex items-center justify-center gap-2
                  px-6 py-3 bg-honey-gold text-white font-medium rounded-lg shadow-lg transition
                  hover:-translate-y-0.5 hover:shadow-xl focus:ring-4 focus:ring-honey-gold/40"
-        >
-          <Icon name="ic:baseline-email" class="w-5 h-5" /> E-mail
-        </a>
+            >
+              <Icon name="ic:baseline-email" class="w-5 h-5" /> E-mail
+            </a>
+          )
+        }
       </div>
     </div>
   </section>

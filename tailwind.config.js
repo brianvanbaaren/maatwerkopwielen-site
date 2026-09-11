@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./src/**/*.{astro,html,js,jsx,ts,tsx}', './public/**/*.svg'],
+  content: ['./src/**/*.{astro,html,js,jsx,ts,tsx,svg}'],
   theme: {
     container: {
       center: true,

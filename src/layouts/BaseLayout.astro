@@ -1,6 +1,13 @@
 ---
 import "../styles/tailwind.css";
 import { Icon } from "astro-icon/components";
+import CmsImage from "../components/CmsImage.astro";
+import { site } from "../lib/content";
+
+interface Props {
+  title?: string;
+  description?: string;
+}
 
 const {
   title = "Maatwerk op Wielen – Uw auto-makelaar",
@@ -30,7 +37,12 @@ const {
       <div class="container flex items-center justify-between py-4">
         <!-- logo -->
         <a href="/" class="flex items-center gap-2">
-          <img src="/logo.svg" alt="Maatwerk op Wielen" class="h-10 sm:h-12" />
+          <CmsImage
+            src={site.logo}
+            alt={site.logoAlt}
+            class="h-10 sm:h-12 w-auto"
+            loading="eager"
+          />
         </a>
 
         <!-- desktop links -->
@@ -125,7 +137,7 @@ const {
     <!-- ░░ FOOTER ░░ -->
     <footer class="bg-trust-blue text-snow-gray py-10 text-sm">
       <div class="container flex flex-col md:flex-row justify-between gap-4">
-        <p>© 2025 Maatwerk op Wielen</p>
+        <p>{site.footer.text}</p>
         <nav class="flex gap-4">
           <a href="/privacy.pdf" class="hover:underline">Privacyverklaring</a>
           <a href="/cookies.pdf" class="hover:underline">Cookieverklaring</a>

@@ -1,0 +1,12 @@
+{
+  "logo": "/src/assets/uploads/logo.svg",
+  "logoAlt": "Maatwerk op Wielen",
+  "contact": {
+    "whatsapp": "316279665314",
+    "phone": "+316279665314",
+    "email": "jasperzweers07@gmail.com"
+  },
+  "footer": {
+    "text": "© 2025 Maatwerk op Wielen"
+  }
+}

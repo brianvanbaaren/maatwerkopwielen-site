@@ -1,0 +1,334 @@
+# ─────────────────────────────────────────────────────────────────────────────
+#  CMS-configuratie (Sveltia CMS – Decap-compatibel)
+#
+#  Wat de klant hier opslaat, wordt als commit naar GitHub geschreven.
+#  De hosting bouwt de site daarna opnieuw en de wijziging staat live.
+# ─────────────────────────────────────────────────────────────────────────────
+
+backend:
+  name: github
+  repo: brianvanbaaren/maatwerkopwielen-site
+  branch: main
+  commit_messages:
+    update: 'Website bijgewerkt: {{collection}} – {{slug}}'
+    create: 'Website: {{collection}} toegevoegd – {{slug}}'
+    delete: 'Website: {{collection}} verwijderd – {{slug}}'
+    uploadMedia: 'Afbeelding toegevoegd: {{path}}'
+    deleteMedia: 'Afbeelding verwijderd: {{path}}'
+  # Inloggen met GitHub vereist een OAuth-proxy. Zie docs/CMS-SETUP.md.
+  # Op Netlify is dit niet nodig; op andere hosting zet je hier de URL van
+  # je eigen auth-worker:
+  # base_url: https://mijn-cms-auth.workers.dev
+
+# Uploads komen in src/assets zodat Astro ze verkleint en omzet naar webp/avif.
+media_folder: src/assets/uploads
+public_folder: /src/assets/uploads
+
+# Zet hier het live domein zodra dat bekend is; dan werkt "Bekijk site".
+# site_url: https://www.maatwerkopwielen.nl
+
+logo_url: /favicon.svg
+
+# De voorbeeldweergave rechts toont bij losse velden alleen labels en
+# verwart meer dan hij helpt. Uit, dus: de klant controleert op de site zelf.
+editor:
+  preview: false
+
+collections:
+  # ───────────────────────────────── Homepagina ─────────────────────────────
+  - name: homepagina
+    label: Homepagina
+    label_singular: Homepagina
+    icon: home
+    files:
+      - name: home
+        label: Teksten en afbeelding
+        file: src/content/home.json
+        format: json
+        description: >-
+          De koptekst, de grote foto bovenaan, de voordelen, het stappenplan,
+          het tarief en de veelgestelde vragen.
+        fields:
+          - name: hero
+            label: Bovenkant van de pagina
+            widget: object
+            fields:
+              - name: image
+                label: Grote foto bovenaan
+                widget: image
+                required: false
+                hint: Liggende foto, minimaal 1600 pixels breed.
+                media_library:
+                  config:
+                    max_file_size: 10000000
+              - name: imageAlt
+                label: Omschrijving van de foto
+                widget: string
+                required: false
+                hint: Korte beschrijving voor Google en voor blinde bezoekers.
+              - name: titleLine1
+                label: Kop – eerste regel
+                widget: string
+              - name: titleLine2
+                label: Kop – tweede regel
+                widget: string
+                required: false
+              - name: subtitle
+                label: Ondertitel
+                widget: string
+                required: false
+              - name: ctaLabel
+                label: Tekst op de knop
+                widget: string
+
+          - name: usps
+            label: Voordelen (blokjes met icoon)
+            label_singular: Voordeel
+            widget: list
+            min: 1
+            max: 8
+            summary: '{{fields.title}}'
+            fields:
+              - name: icon
+                label: Icoon
+                widget: select
+                default: ic:baseline-verified-user
+                options: &icon_options
+                  - { label: 'Schild (betrouwbaar)', value: ic:baseline-verified-user }
+                  - { label: 'Sleutel', value: ic:baseline-vpn-key }
+                  - { label: 'Handdruk', value: ic:baseline-handshake }
+                  - { label: 'Persoon', value: ic:baseline-person }
+                  - { label: 'Gesprek', value: ic:baseline-question-answer }
+                  - { label: 'Zoeken', value: ic:baseline-search }
+                  - { label: 'Checklist', value: ic:baseline-assignment-turned-in }
+                  - { label: 'Auto', value: ic:baseline-directions-car }
+                  - { label: 'Euro', value: ic:baseline-euro }
+                  - { label: 'Klok', value: ic:baseline-schedule }
+                  - { label: 'Ster', value: ic:baseline-star }
+                  - { label: 'Duim omhoog', value: ic:baseline-thumb-up }
+                  - { label: 'Telefoon', value: ic:baseline-call }
+                  - { label: 'E-mail', value: ic:baseline-email }
+              - name: title
+                label: Titel
+                widget: string
+              - name: text
+                label: Toelichting
+                widget: text
+                required: false
+
+          - name: process
+            label: Stappenplan
+            widget: object
+            fields:
+              - name: heading
+                label: Kop boven het stappenplan
+                widget: string
+              - name: steps
+                label: Stappen
+                label_singular: Stap
+                widget: list
+                min: 1
+                max: 8
+                summary: '{{fields.step}}'
+                fields:
+                  - name: icon
+                    label: Icoon
+                    widget: select
+                    default: ic:baseline-question-answer
+                    options: *icon_options
+                  - name: step
+                    label: Titel van de stap
+                    widget: string
+                  - name: desc
+                    label: Toelichting
+                    widget: text
+                    required: false
+
+          - name: reviews
+            label: Reviews
+            widget: object
+            fields:
+              - name: heading
+                label: Kop boven de reviews
+                widget: string
+                hint: De reviews zelf staan onder "Reviews" in het menu links.
+
+          - name: pricing
+            label: Tarief en veelgestelde vragen
+            widget: object
+            fields:
+              - name: heading
+                label: Kop
+                widget: string
+              - name: priceLabel
+                label: Tekst voor het bedrag
+                widget: string
+                required: false
+                hint: Bijvoorbeeld "Volledige begeleiding vanaf".
+              - name: price
+                label: Bedrag
+                widget: string
+                required: false
+                hint: Bijvoorbeeld "€ 595 incl. btw". Wordt dikgedrukt weergegeven.
+              - name: priceNote
+                label: Tekst na het bedrag
+                widget: string
+                required: false
+              - name: faq
+                label: Veelgestelde vragen
+                label_singular: Vraag
+                widget: list
+                summary: '{{fields.q}}'
+                required: false
+                fields:
+                  - name: q
+                    label: Vraag
+                    widget: string
+                  - name: a
+                    label: Antwoord
+                    widget: text
+                    required: false
+
+          - name: contact
+            label: Contactblok onderaan
+            widget: object
+            fields:
+              - name: heading
+                label: Kop
+                widget: string
+              - name: text
+                label: Tekst
+                widget: text
+                required: false
+
+          - name: seo
+            label: Vindbaarheid in Google
+            widget: object
+            collapsed: true
+            fields:
+              - name: title
+                label: Paginatitel
+                widget: string
+                hint: Verschijnt in het tabblad en als blauwe link in Google. Max 60 tekens.
+                pattern: ['^.{1,70}$', 'Houd de titel onder de 70 tekens.']
+              - name: description
+                label: Omschrijving voor Google
+                widget: text
+                hint: Max 155 tekens.
+                pattern: ['^.{1,160}$', 'Houd de omschrijving onder de 160 tekens.']
+
+  # ────────────────────────────────── Over ──────────────────────────────────
+  - name: over
+    label: Over
+    icon: person
+    files:
+      - name: over
+        label: Over Jasper
+        file: src/content/pages/over.md
+        fields:
+          - name: heading
+            label: Kop
+            widget: string
+          - name: image
+            label: Foto
+            widget: image
+            required: false
+            media_library:
+              config:
+                max_file_size: 10000000
+          - name: imageAlt
+            label: Omschrijving van de foto
+            widget: string
+            required: false
+          - name: body
+            label: Tekst
+            widget: markdown
+            buttons: [bold, italic, link, bulleted-list, numbered-list]
+            editor_components: []
+            hint: Gebruik Enter voor een nieuwe alinea.
+          - name: quote
+            label: Quote onderaan
+            widget: string
+            required: false
+            hint: Wordt automatisch tussen aanhalingstekens gezet.
+
+  # ───────────────────────────────── Reviews ────────────────────────────────
+  - name: reviews
+    label: Reviews
+    icon: star
+    files:
+      - name: reviews
+        label: Reviews van klanten
+        file: src/content/testimonials.json
+        format: json
+        fields:
+          - name: items
+            label: Reviews
+            label_singular: Review
+            widget: list
+            summary: '{{fields.name}}'
+            fields:
+              - name: name
+                label: Naam en plaats
+                widget: string
+                hint: Bijvoorbeeld "Mark – Arnhem".
+              - name: quote
+                label: Wat de klant zegt
+                widget: text
+              - name: image
+                label: Foto (optioneel)
+                widget: image
+                required: false
+                hint: Zonder foto verschijnt de eerste letter van de naam in een rondje.
+                media_library:
+                  config:
+                    max_file_size: 5000000
+
+  # ─────────────────────────── Algemene instellingen ────────────────────────
+  - name: instellingen
+    label: Instellingen
+    icon: settings
+    files:
+      - name: site
+        label: Logo, contact en footer
+        file: src/content/site.json
+        format: json
+        fields:
+          - name: logo
+            label: Logo
+            widget: image
+            required: false
+          - name: logoAlt
+            label: Omschrijving van het logo
+            widget: string
+            required: false
+          - name: contact
+            label: Contactgegevens
+            widget: object
+            hint: Deze gegevens worden gebruikt voor de knoppen onderaan de pagina.
+            fields:
+              - name: whatsapp
+                label: WhatsApp-nummer
+                widget: string
+                required: false
+                hint: 'Met landcode, zonder + of spaties. Voorbeeld: 31612345678'
+                pattern: ['^[0-9]{8,15}$', 'Alleen cijfers, met landcode (bijv. 31612345678).']
+              - name: phone
+                label: Telefoonnummer
+                widget: string
+                required: false
+                hint: 'Voorbeeld: +31612345678'
+                pattern: ['^\+?[0-9 ()-]{8,20}$', 'Vul een geldig telefoonnummer in.']
+              - name: email
+                label: E-mailadres
+                widget: string
+                required: false
+                pattern: ['^[^@\s]+@[^@\s]+\.[^@\s]+$', 'Vul een geldig e-mailadres in.']
+          - name: footer
+            label: Footer
+            widget: object
+            fields:
+              - name: text
+                label: Tekst linksonder
+                widget: string
+                required: false
