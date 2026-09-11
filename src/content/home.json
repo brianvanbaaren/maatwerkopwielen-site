@@ -1,0 +1,88 @@
+{
+  "seo": {
+    "title": "Maatwerk op Wielen – Persoonlijke automakelaar",
+    "description": "Uw persoonlijke automakelaar – van zoektocht tot aflevering."
+  },
+  "hero": {
+    "image": "/src/assets/uploads/hero-auto.png",
+    "imageAlt": "Moderne auto rijdt door zonnige straat",
+    "titleLine1": "Maatwerk op wielen,",
+    "titleLine2": "zonder gedoe!",
+    "subtitle": "Uw persoonlijke automakelaar – van zoektocht tot aflevering.",
+    "ctaLabel": "Plan gratis intake"
+  },
+  "usps": [
+    {
+      "icon": "ic:baseline-verified-user",
+      "title": "100% onafhankelijk",
+      "text": "Geen voorraad, geen verkooppraatjes – alleen uw belang."
+    },
+    {
+      "icon": "ic:baseline-vpn-key",
+      "title": "Top-aanbod op maat",
+      "text": "Dealers, veilingen en particulieren in heel Nederland."
+    },
+    {
+      "icon": "ic:baseline-handshake",
+      "title": "Onderhandelen & check",
+      "text": "U bespaart tijd en geld; elke auto wordt grondig gecontroleerd."
+    },
+    {
+      "icon": "ic:baseline-person",
+      "title": "Eén aanspreekpunt",
+      "text": "Persoonlijk contact – reactie op WhatsApp binnen 24 uur."
+    }
+  ],
+  "process": {
+    "heading": "Zo werkt het",
+    "steps": [
+      {
+        "icon": "ic:baseline-question-answer",
+        "step": "1. Intake",
+        "desc": "Uw wensen, budget en planning helder in kaart."
+      },
+      {
+        "icon": "ic:baseline-search",
+        "step": "2. Zoeken",
+        "desc": "Selectie van geschikte auto’s uit vertrouwde bronnen."
+      },
+      {
+        "icon": "ic:baseline-assignment-turned-in",
+        "step": "3. Controle & deal",
+        "desc": "Historie-check, proefrit en scherpe onderhandeling."
+      },
+      {
+        "icon": "ic:baseline-directions-car",
+        "step": "4. Levering",
+        "desc": "Bij u thuis of op locatie – rijklaar en zonder zorgen."
+      }
+    ]
+  },
+  "reviews": {
+    "heading": "Ervaringen van klanten"
+  },
+  "pricing": {
+    "heading": "Transparant tarief",
+    "priceLabel": "Volledige begeleiding vanaf",
+    "price": "€ 595 incl. btw",
+    "priceNote": "U betaalt pas wanneer we dé auto hebben gevonden.",
+    "faq": [
+      {
+        "q": "Wat krijg ik voor dit bedrag?",
+        "a": "Persoonlijk advies, selectie uit betrouwbaar aanbod, historie- en technische check, onderhandeling en levering."
+      },
+      {
+        "q": "Is het intakegesprek gratis?",
+        "a": "Ja, het intakegesprek is kosteloos en vrijblijvend."
+      },
+      {
+        "q": "Hoe snel reageer je?",
+        "a": "Jasper reageert op WhatsApp doorgaans binnen 24 uur, ook in het weekend."
+      }
+    ]
+  },
+  "contact": {
+    "heading": "Plan uw gratis intake",
+    "text": "Bel, mail of stuur een WhatsApp-bericht en Jasper neemt binnen 24 uur contact met u op."
+  }
+}

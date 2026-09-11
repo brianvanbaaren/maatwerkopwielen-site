@@ -17,3 +17,6 @@ pnpm-debug.log*
 .env*
 # OS
 .DS_Store
+
+# CMS-bundle wordt uit node_modules gekopieerd (npm run cms:sync)
+public/admin/sveltia-cms.js
