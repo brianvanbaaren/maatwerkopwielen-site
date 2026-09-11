@@ -47,38 +47,58 @@ verkleint en naar webp omzet. De hero ging daardoor van 2,5 MB naar 148 kB.
 er een bestand niet, dan valt het `CmsImage`-component terug op een `fallback`-slot
 in plaats van een kapotte afbeelding.
 
-## Nog te doen: hosting met automatische rebuild
+## Live zetten en testen
 
-**Dit is de ontbrekende schakel.** In de repo zit nu geen hosting- of
-CI-configuratie, dus een commit van de klant leidt nog nergens tot een nieuwe
-build. Zonder deze stap werkt het CMS wel, maar verandert de live site niet.
+Zolang dit niet staat, is er geen plek waar de klant het CMS kan gebruiken: de
+editor werkt dan wel lokaal, maar een wijziging komt nergens terecht. Er staat
+een `netlify.toml` in de repo, dus Netlify leest de bouwinstellingen zelf.
+Netlify is hier de aanrader om één reden: het regelt de GitHub-login voor
+`/admin` zonder dat je zelf een auth-proxy moet draaien.
 
-Kies één van de drie; alle drie bouwen automatisch bij een push naar `main`:
+Reken op een half uur, eenmalig.
 
-| Hosting | Build command | Publish directory | Inloggen op /admin |
-| --- | --- | --- | --- |
-| Netlify | `npm run build` | `dist` | Ingebouwd, geen extra werk |
-| Cloudflare Pages | `npm run build` | `dist` | Eigen auth-worker nodig |
-| Vercel | `npm run build` | `dist` | Eigen auth-worker nodig |
+1. **Repo koppelen.** Netlify → *Add new site* → *Import an existing project* →
+   GitHub → deze repo → branch `main`. Build command en publish directory komen
+   uit `netlify.toml`; niets in te vullen. Deploy.
+2. **Controleer de site.** Open het `*.netlify.app`-adres. De homepage moet er
+   staan zoals hij hoort.
+3. **GitHub OAuth App maken.** GitHub → *Settings* → *Developer settings* →
+   *OAuth Apps* → *New OAuth App*. Homepage URL: je Netlify-adres. Authorization
+   callback URL: `https://api.netlify.com/auth/done`. Bewaar de Client ID en
+   genereer een Client Secret.
+4. **Provider in Netlify zetten.** Netlify → *Site configuration* →
+   *Access control* → *OAuth* → *Install provider* → GitHub, en vul de Client ID
+   en Secret in. Hierna werkt "Sign In with GitHub" op `/admin`; de
+   `base_url` in `config.yml` hoeft niet aangepast te worden.
+5. **De klant toegang geven.** GitHub → repo → *Settings* → *Collaborators* →
+   *Add people*. De klant heeft een GitHub-account met schrijfrechten nodig;
+   dat is inherent aan een git-based CMS.
+6. **Zelf de hele keten testen.** Ga naar `https://<jouw-site>/admin/`, log in,
+   verander de ondertitel in de hero, klik *Save*. Er hoort nu een commit op
+   `main` te staan, Netlify hoort te gaan bouwen en na één tot twee minuten
+   hoort de nieuwe tekst op de homepage te staan. Werkt dit, dan werkt het CMS.
+7. **Build-notificaties aanzetten.** Netlify → *Notifications* →
+   *Deploy failed* → e-mail naar jezelf. Nodig, want bij een leeggemaakt
+   verplicht veld faalt de build met opzet en verandert de live site niet. Zonder
+   melding blijft dat onopgemerkt en snapt de klant niet waarom hij niets ziet.
+8. **Eigen domein.** Netlify → *Domain management*, zodra het domein bekend is.
+   Zet daarna ook `site_url` in `public/admin/config.yml`, dan werkt de knop
+   "Bekijk site" in de beheeromgeving.
 
-## Inloggen op /admin
+### Andere hosting
 
-De klant heeft een **GitHub-account met schrijfrechten op deze repo** nodig
-(Settings → Collaborators → Add people). Dat is de belangrijkste horde van deze
-opzet: een git-based CMS zonder GitHub-account bestaat niet. Drie manieren:
+Cloudflare Pages en Vercel werken net zo goed en bouwen ook bij elke push
+(build command `npm run build`, output directory `dist`). Daar heb je stap 3 en 4
+niet, maar moet je in plaats daarvan zelf een OAuth-proxy draaien: maak een
+GitHub OAuth App en deploy
+[`sveltia-cms-auth`](https://github.com/sveltia/sveltia-cms-auth) als Cloudflare
+Worker, en zet de URL daarvan als `base_url` onder `backend` in
+`public/admin/config.yml` (staat er als commentaar klaar).
 
-1. **Netlify hosting (eenvoudigst).** Zet in Netlify onder
-   *Site configuration → Access control → OAuth* GitHub als provider. Daarna
-   werkt "Sign In with GitHub" zonder verdere configuratie: de standaard
-   `base_url` van het CMS wijst al naar Netlify.
-2. **Eigen auth-proxy (elke hosting).** Maak een GitHub OAuth App en deploy
-   [`sveltia-cms-auth`](https://github.com/sveltia/sveltia-cms-auth) als
-   Cloudflare Worker. Zet de URL daarvan in `public/admin/config.yml` bij
-   `base_url` (staat er als commentaar klaar).
-3. **Access token (snelste om te testen).** De klant maakt een fine-grained
-   personal access token met `Contents: read and write` op deze repo en kiest
-   "Sign In Using Access Token". Geen proxy nodig, maar je laat een
-   niet-technische gebruiker met een token rommelen — doe dit alleen tijdelijk.
+Snel iets willen proberen zonder dat alles staat? De klant kan op `/admin`
+kiezen voor "Sign In Using Access Token" met een fine-grained personal access
+token dat `Contents: read and write` op deze repo heeft. Geen proxy nodig, maar
+je laat een niet-technische gebruiker met een token werken — alleen tijdelijk.
 
 ### Zelf redigeren zonder inloggen
 

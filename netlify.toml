@@ -1,0 +1,15 @@
+# netlify.toml — hosting die automatisch bouwt bij een push naar main.
+# Verbind de repo eenmalig met Netlify; deze instellingen worden dan gelezen.
+
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# De beheeromgeving hoort niet in Google.
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
